@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12.827" height="9.414" viewBox="0 0 12.827 9.414">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #ffae29;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <path id="icon_check" class="cls-1" d="M-1014.564-1117.538l3.923,4.31s3.976-4.815,6.077-7" transform="translate(1015.977 1121.642)"/>
+</svg>

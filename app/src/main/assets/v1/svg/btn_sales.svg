@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke: #00b896;
+      }
+
+      .cls-2 {
+        fill: #00b896;
+        font-size: 11px;
+        font-family: NotoSansKR-Regular, Noto Sans KR;
+        letter-spacing: -0.05em;
+      }
+
+      .cls-3 {
+        stroke: none;
+      }
+
+      .cls-4 {
+        fill: none;
+      }
+    </style>
+  </defs>
+  <g id="btn_sales" transform="translate(-333 -157)">
+    <g id="bg_allotment" class="cls-1" transform="translate(333 157)">
+      <rect class="cls-3" width="34" height="18" rx="9"/>
+      <rect class="cls-4" x="0.5" y="0.5" width="33" height="17" rx="8.5"/>
+    </g>
+    <text id="입금" class="cls-2" transform="translate(350 170)"><tspan x="-9.845" y="0">입금</tspan></text>
+  </g>
+</svg>

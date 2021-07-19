@@ -1,0 +1,770 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>가맹점평가 :: 점검관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    let json, json2;
+    let currentSection = 0;
+    let section = [];
+    const uid = getLoginedId();
+    const name = qs.name;
+    const bza = qs.id;
+    let totalScore = 0;
+    init = ()=>{
+        $("#shop-name").html(name);
+        loadData();
+    };
+    onSelectedTabBarItem = (idx) => {
+    };
+    function sendData1() {
+        sendData2();
+    }
+    function sendData2() {
+        let seq = [];
+        let val = [];
+        $('.final-ask-item').each(function(){
+            seq.push($(this).data('seq'));
+            val.push($(this).data('val'));
+        });
+        const rmk = $('#rmk').val();
+        const data = {gbn: 9, uid, bza, seq: `${seq.join(',')}`, val: `${val.join(',')}`, rmk};
+        const url = `${api_domain}/uat/uia/actionChk.do`;
+        console.log(`가맹점 요청사항 전송 : url : ${url}`);
+        $.ajax({
+            method: "POST",
+            url,
+            data,
+        }).done(function(data){
+            const json = JSON.parse(data);
+            if(json && json[0] && json[0].code == '200') { // 성공
+                openActivity('점검관리:가맹점평가완료',[`${bza}`,`${name}`]);
+            } else { // 실패
+                alert(json.msg || json[0].msg );
+            }
+        });
+    }
+    function showAskSection() {
+        $('.TableBody').scrollTop(0);
+        $('.ask-section').hide();
+        $(`.ask-section-${currentSection}`).show();
+        $('.TabBar-Item-Index').removeClass('selected');
+        $('.TabBar-Item-Index').eq(currentSection).addClass('selected');
+    }
+    function onNext() {
+        if(currentSection >= section.length) {
+            sendData1();
+            return;
+        }
+        if(json) {
+            const z = section[currentSection];
+            for(let x=0; x<json[z].length; x++) {
+                console.log(`체크 : ${json[z][x].check} : ${json[z][x].scateNm}`);
+                if(json[z][x].check != 'true') {
+                    alert('점검에서 빠진 항목이 있습니다.');
+                    return;
+                }
+            }
+            currentSection += 1;
+            showAskSection();
+
+            if(currentSection >= section.length) {
+                $('.TabBar').hide();
+                $('#total-score').css({color: '#00b896'});
+                $('.TableFoot-Row-Cell-Right img').attr('src', '../../svg/btn_confirm.svg');
+            }
+
+        } else {
+            alert('제출 할 점검 내용이 없습니다.');
+        }
+    }
+    // camera
+
+    function uploadImage(ele, id, bcateCd, mcateCd, scateCd) {
+        var data = new FormData(document.getElementById(`ask-files-${bcateCd}-${mcateCd}-${scateCd}`));
+        const url = `${api_domain}/uat/uia/actionChk.do`;
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url,
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+        })
+        .done(function (data) {
+            console.log(`사진전송완료: ${data}`);
+            const res = JSON.parse(data);
+            $(`#ask-item-${id} .photo-list-inner`).html('');
+            for(const p in res) {
+                console.log(`res[${p}] : ${res[p]}`);
+                const html = `<div class="photo-item"><img src="${res[p].url}" width="60" height="60"><img src="../../svg/btn_delete.svg" class="btn-del" onclick="cancelPhoto(this, '${id}', '${bcateCd}', '${mcateCd}', '${scateCd}', '${res[p].seq}')"></div>`;
+                $(`#ask-item-${id} .photo-list-inner`).append(html);
+                $(`#ask-item-${id} .photo-list`).show();
+            }
+            //loadPhoto(ele, id, bcateCd, mcateCd, scateCd, res)
+        })
+        .fail(function (e) {
+            hideLoading();
+            alert(`사진전송오류: ${e}`);
+            console.log(`사진전송오류: ${e}`);
+        });
+    }
+
+    function loadPhoto(ele, id, bcateCd, mcateCd, scateCd, res) {
+        const fileList = ele.files;
+        console.log('loadPhoto=', id, ', ', fileList.length);
+        loadFile(fileList.length, 0, bcateCd, mcateCd, scateCd, res);
+        function loadFile(length, idx, bcateCd, mcateCd, scateCd, res) {
+            console.log('loadFile=', length, ', ', idx);
+            if(length <= idx) {
+                return;
+            }
+            const pos = res.length - 1;
+            const seq = res[pos]["seq"];
+            const file = fileList[idx];
+            const fr = new FileReader();
+            fr.readAsDataURL(file);
+            fr.onload = function(evt) {
+                console.log('src=', evt.target.result)
+                const html = `<div class="photo-item"><img src="${evt.target.result}" width="60" height="60"><img src="../../svg/btn_delete.svg" class="btn-del" onclick="cancelPhoto(this, '${id}', '${bcateCd}', '${mcateCd}', '${scateCd}', '${seq}')"></div>`;
+                $(`#ask-item-${id} .photo-list-inner`).append(html);
+                $(`#ask-item-${id} .photo-list`).show();
+                loadFile(length, idx+1, bcateCd, mcateCd, scateCd, res);
+            }
+        }
+    }
+    function cancelPhoto(ele, id, bcateCd, mcateCd, scateCd, seq) {
+        // 서버에 삭제
+        const url = `${api_domain}/uat/uia/actionChk.do`;
+        const data = {gbn: 12, uid, bza, bcateCd, mcateCd, scateCd, seq};
+        $.ajax({
+            method: "POST",
+            url,
+            data,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            res = JSON.parse(res);
+            $(`#ask-item-${id} .photo-list-inner`).html('');
+            for(const p in res) {
+                console.log(`res[${p}] : ${res[p]}`);
+                const html = `<div class="photo-item"><img src="${res[p].url}" width="60" height="60"><img src="../../svg/btn_delete.svg" class="btn-del" onclick="cancelPhoto(this, '${id}', '${bcateCd}', '${mcateCd}', '${scateCd}', '${res[p].seq}')"></div>`;
+                $(`#ask-item-${id} .photo-list-inner`).append(html);
+                $(`#ask-item-${id} .photo-list`).show();
+            }
+            //$(ele).parent().remove();
+            const count = $(`#ask-item-${id} .photo-item`).length;
+            if(count == 0) {
+                $(`#ask-item-${id} .photo-list`).hide();
+            }
+        });
+    }
+    function oncamera(id) {
+        const count = $(`#ask-files-${id} input[type=file]`).length;
+        $(`#ask-files-${id}-${count}`).click();
+
+        console.log(`id: ${id}, count: ${count}`);
+    }
+    // camera
+    function calcTotalScore() {
+        totalScore = 0;
+        if(json) {
+            for(let z in json) {
+                for(let x=0; x<json[z].length; x++) {
+                    //console.log(`${json[z][x].scateNm}: ${json[z][x].exPt}`);
+                    const score = +json[z][x].exPt;
+                    totalScore += score;
+                    //console.log('score2: '+score);
+                }
+            }
+        }
+        $('#total-score').html(totalScore);
+    }
+    function setPointValue(ele, bcateNm, bcateCd, mcateCd, scateCd, exPt, point) {
+        //alert(`${json[bcateNm][i].scateNm} : ${json[bcateNm][i].exPt}`);
+        const url = `${api_domain}/uat/uia/actionChk.do`;
+        const data = {gbn:61, uid, bza, bcateCd, mcateCd, scateCd, point, exPt};
+        $.ajax({
+            method: "POST",
+            url,
+            data,
+        })
+        .done(function( res ) {
+            console.log(`점수 전송 완료 : ${res}`);
+            const x = JSON.parse(res)[0];
+            if(x.code == "200") {
+                const p = $(ele).parent();
+                p.children().removeClass('selected');
+                $(ele).addClass('selected');
+                let i = 0;
+                for(i=0; i<json[bcateNm].length; i++) {
+                    if(json[bcateNm][i].bcateCd == bcateCd
+                    && json[bcateNm][i].mcateCd == mcateCd
+                    && json[bcateNm][i].scateCd == scateCd) {
+                        json[bcateNm][i].exPt = exPt;
+                        json[bcateNm][i]['check'] = 'true';
+                        break;
+                    }
+                }
+                calcTotalScore();
+            } else {
+                alert('점수 전송에 실패 하였습니다. 다시 해주세요.');
+            }
+        });
+    }
+    function yesOrNo(ele, idx, bcateNm, bcateCd, mcateCd, scateCd, exPt, point) {
+        const url = `${api_domain}/uat/uia/actionChk.do`;
+        const data = {gbn:61, uid, bza, bcateCd, mcateCd, scateCd, point, exPt};
+        $.ajax({
+            method: "POST",
+            url,
+            data,
+        })
+        .done(function( res ) {
+            console.log(`점수 전송 완료 : ${res}`);
+            const x = JSON.parse(res)[0];
+            if(x.code == "200") {
+                let p = $(ele).parent().parent();
+                p.children('.YN').addClass('hide');
+                p.children('.YN').eq(idx).removeClass('hide');
+                if(exPt == '0') {
+                    //p.prev().show();
+                } else {
+                    //p.prev().hide();
+                }
+                let i = 0;
+                for(i=0; i<json[bcateNm].length; i++) {
+                    if(json[bcateNm][i].bcateCd == bcateCd
+                    && json[bcateNm][i].mcateCd == mcateCd
+                    && json[bcateNm][i].scateCd == scateCd) {
+                        json[bcateNm][i].exPt = exPt;
+                        json[bcateNm][i]['check'] = 'true';
+                        break;
+                    }
+                }
+                calcTotalScore();
+            } else {
+                alert('점수 전송에 실패 하였습니다. 다시 해주세요.');
+            }
+        });
+    }
+    function loadData() {
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=5&uid=${uid}&dtlCd=01&bza=${bza}`;
+        console.log(`url: ${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            setData(res);
+            calcTotalScore();
+        });
+    }
+    async function setData(res) {
+        json = JSON.parse(res);
+        section = [];
+        let i = 0;
+        for(let z in json) {
+            json[z]['check'] = "";
+            section.push(z);
+            await setAsk(i, json[z]);
+            i += 1;
+        }
+        loadData2();
+    }
+    function subCall(item) {
+        return new Promise((resolve, reject) => {
+            const url = `${api_domain}/uat/uia/actionChk.do?gbn=6&uid=${uid}&bcateCd=${item.bcateCd}&mcateCd=${item.mcateCd}&scateCd=${item.scateCd}`;
+            console.log(`sub call url: ${url}`);
+            $.ajax({
+                method: "GET",
+                url,
+            })
+            .done(function( res ) {
+                console.log( "Response: " + res );
+                resolve(JSON.parse(res));
+            })
+            .fail(function( jqXHR, textStatus, errorThrown ) {
+                reject([]);
+            });
+        });
+    }
+    async function setAsk(idx, items){
+        let html = '';
+        let oldTitle = '';
+        let num1 = 0;
+        let num2 = 0;
+        for(let i=0; i<items.length; i++) {
+            const item = items[i];
+            //const subItems = await subCall(item);
+            if(oldTitle != item.mcateNm) {
+                oldTitle = item.mcateNm;
+                html += `<div class="mcateNm"><span class="engnum">${++num1}.</span> ${item.mcateNm}</div>`;
+                num2 = 0;
+            }
+            num2 += 1;
+            let subAskHtml = '';
+            /*
+            if(subItems.length > 0) {
+                subAskHtml += '<div class="sub-ask"><select>';
+                for(let z=0; z<subItems.length; z++) {
+                    subAskHtml += `<option>${subItems[z].dtlNm}</option>`;
+                }
+                subAskHtml += '</select></div>';
+            }
+            */
+            let pointHtml = '';
+            if(item.pointTp == "2") {
+                pointHtml = `<!-- div class="note">점수 조정이 가능한 항목입니다.</div --><div class="exPt exPt2">`;
+                for(let x=0; x<=parseInt(item.point); x++) {
+                    if(x > 0) {
+                        pointHtml += `<span class="exPtGap"></span>`;
+                    }
+                    let selected = '';
+                    if(item.exPt != '0' && item.exPt == x) {
+                        selected = ' selected';
+                        item.check = 'true';
+                    }
+
+                    pointHtml += `<span class="exPtValue${selected}" onclick="setPointValue(this, '${item.bcateNm}', '${item.bcateCd}', '${item.mcateCd}', '${item.scateCd}', '${x}', '${item.point}')"><span class="engnum">${x}</span></span>`;
+                }
+                pointHtml += `</div>`;
+            } else {
+
+                let hideX = '';
+                let hideY = '';
+                let hideN = '';
+                if(item.exPt != '0' && item.exPt == item.point) {
+                    hideX = ' hide';
+                    hideY = '';
+                    hideN = ' hide';
+                    item.check = 'true';
+                } else {
+                    hideX = ' hide';
+                    hideY = ' hide';
+                    hideN = '';
+                }
+                pointHtml = `
+                <!-- div class="exPt-Reason"><input type="text" placeholder="50자 이내 사유를 입력 해주세요."></div -->
+                <div class="exPt exPt1">
+                    <div class="YN exPtX${hideX}"><img src="../../svg/btn_answer_x.svg"></div>
+                    <div class="YN exPtY${hideY}"><img src="../../svg/btn_answer_y.svg"></div>
+                    <div class="YN exPtN${hideN}"><img src="../../svg/btn_answer_n.svg"></div>
+                    <div class="innerYN"><div class="Y" onclick="yesOrNo(this, 1, '${item.bcateNm}', '${item.bcateCd}', '${item.mcateCd}', '${item.scateCd}', '${item.point}', '${item.point}');"> </div>
+                    <div class="N" onclick="yesOrNo(this, 2, '${item.bcateNm}', '${item.bcateCd}', '${item.mcateCd}', '${item.scateCd}', '0', '${item.point}');"> </div></div>
+                </div>`;
+            }
+            html += `<div class="ask-box">
+            <div class="point"><span>배점</span> <span>${item.point}</span></div>
+            <div class="scate-box" id="ask-item-${item.bcateCd}-${item.mcateCd}-${item.scateCd}">
+                <div class="allotment" onclick="openActivity('점검관리:세부기준', ['${bza}', '${num1}-${num2}. ${item.scateNm}', '${item.bcateCd}', '${item.mcateCd}', '${item.scateCd}'])"><img src="../../svg/allotment.svg"></div>
+                <div class="scateNm"><span class="engnum">${num1}-${num2}.</span> <span>${item.scateNm}</span></div>
+                ${subAskHtml}
+                <div class="photo-list"><div class="photo-list-inner"></div></div>
+                ${pointHtml}
+                <form style="display:none" class="ask-files" id="ask-files-${item.bcateCd}-${item.mcateCd}-${item.scateCd}">
+                    <input type="hidden" name="gbn" value="11"/>
+                    <input type="hidden" name="uid" value="${uid}"/>
+                    <input type="hidden" name="bza" value="${bza}"/>
+                    <input type="hidden" name="bcateCd" value="${item.bcateCd}"/>
+                    <input type="hidden" name="mcateCd" value="${item.mcateCd}"/>
+                    <input type="hidden" name="scateCd" value="${item.scateCd}"/>
+                    <input type="file" name="img" id="ask-files-${item.bcateCd}-${item.mcateCd}-${item.scateCd}-1" style="display:none;" onchange="uploadImage(this, '${item.bcateCd}-${item.mcateCd}-${item.scateCd}', '${item.bcateCd}', '${item.mcateCd}', '${item.scateCd}')">
+                </form>
+                <div class="camera" onclick="oncamera('${item.bcateCd}-${item.mcateCd}-${item.scateCd}');"><img src="../../svg/btn_photo1.svg"></div>
+            </div></div><div class="ask-gab"></div>`;
+
+            $(`#full-score`).html(`${item.totPt}`);
+        }
+        if( items.length < 1 ) {
+            html = `
+                    <!-- EmptyData -->
+                    <div class="EmptyData">
+                        <div class="EmptyData-Item">
+                            <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                            <div class="EmptyData-Item-Text"><span class="hangle">점검항목이 없습니다.</span></div>
+                        </div>
+                    </div>`;
+        }
+        $('.TableBody').append(`<div class="ask-section ask-section-${idx}">${html}</div>`);
+
+        for(let i=0; i<items.length; i++) {
+            const item = items[i];
+            cancelPhoto($(`#ask-files-${item.bcateCd}-${item.mcateCd}-${item.scateCd}-1`)[0], `${item.bcateCd}-${item.mcateCd}-${item.scateCd}`, `${item.bcateCd}`, `${item.mcateCd}`, `${item.scateCd}`, '0');
+        }
+    }
+    function loadData2() {
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=7&uid=${uid}&bza=${bza}`;
+        console.log(`loadData2 url: ${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            setData2(res);
+        });
+    }
+    function setData2(res) {
+        json2 = JSON.parse(res);
+        let askHtml = '';
+        for(let z=0; z<json2.length; z++) {
+            askHtml += `<div class="final-ask-item" onclick="onClickFinalItem(this);" data-seq="${json2[z].seq}" data-val="${json2[z].val}">${json2[z].reqItm}</div>`;
+        }
+        let html = `
+            <div class="final-title">가맹점 요청사항</div>
+            <div class="final-ask-box">
+                ${askHtml}
+            </div>
+            <div class="final-title">기타의견</div>
+            <div class="final-ask-box">
+                <textarea id="rmk" placeholder="100자 이내의 의견을 작성 해주세요."></textarea>
+            </div>
+        `;
+        $('.TableBody').append(`<div class="ask-section ask-section-${section.length}">${html}</div>`);
+
+        showAskSection();
+    }
+    function onClickFinalItem(ele) {
+        ele = $(ele);
+        const seq = ele.data('seq');
+        const val = ele.data('val');
+        if(val == "0") {
+            ele.css({backgroundImage : "url(../../svg/check_on.svg)"});
+            ele.data('val', '1');
+        } else {
+            ele.css({backgroundImage : "url(../../svg/check_off.svg)"});
+            ele.data('val', '0');
+        }
+        for(let z=0; z<json2.length; z++) {
+            if(seq == json2[z].seq) {
+                json2[z].val = ele.data('val');
+                break;
+            }
+        }
+    }
+    </script>
+    <style>
+    .mcateNm {
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+        font-size: 17px;
+        line-height: 22px;
+        color: #39352b;
+        padding-top: 15px;
+    }
+    .ask-gab {
+        height: 44px;
+    }
+    .ask-box {
+        position: relative;
+        background-color: #f6f9f9;
+        padding: 20px 20px 20px 20px;
+        margin-top: 16px;
+        border-radius: 10px;
+    }
+    .point {
+        position: absolute;
+        right: 15px;
+        top: -12px;
+        background-image: url(../../svg/bg_allotment.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 58px;
+        height: 24px;
+        vertical-align: center;
+        text-align: center;
+    }
+    .scateNm {
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 22px;
+        color: #39352b;
+    }
+    .sub-ask {
+        margin-top: 20px;
+        background-color: #fff;
+        padding: 7px 7px 9px 0;
+        border-radius: 5px;
+    }
+    .sub-ask select {
+        background-image: url(../../svg/icon_check.svg);
+        background-repeat: no-repeat;
+        background-position: 13px center;
+        overflow: hidden;
+        white-space: pre;
+        text-overflow: ellipsis;
+        -webkit-appearance: none;
+        border: none;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 15px;
+        line-height: 24px;
+        color: #39352b;
+        width: 100%;
+        vertical-align: middle;
+        padding-left: 29px;
+    }
+    .note {
+        background-image: url(../../svg/icon_note.svg);
+        background-repeat: no-repeat;
+        background-position: left center;
+        margin-top: 20px;
+        padding-left: 19px;
+        font-size: 13px;
+        line-height: 24px;
+        color: #39352b;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    .exPt-Reason {
+        padding-top: 19px;
+        padding-bottom: 12px;
+        border: none;
+        border-bottom: 1px solid #e0e8e8;
+        display: none;
+    }
+    .exPt-Reason input {
+        border: none;
+        background-color: transparent;
+        font-size: 15px;
+        line-height: 24px;
+        width: 100%;
+    }
+    .exPt1 {
+        position: relative;
+    /*
+        bottom: -40px;
+        left: 9px;
+        z-index: 2;
+    */
+    }
+    .exPt1 .innerYN {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+    .exPt1 .innerYN div {
+        flex: 1 1 auto;
+    }
+    .exPt2 {
+        display: flex;
+        flex-flow: wrap;
+        justify-content: flex-start;
+        padding-top: 0;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    .exPtGap {
+        flex: 0 0 auto;
+        width: 4%;
+    }
+    .exPtValue {
+        flex: 0 0 auto;
+        background-color: #bfcbcb;
+        border-radius: 20px;
+        padding: 6px 0;
+        color: #ffffff;
+        vertical-align: center;
+        text-align: center;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 22px;
+        width: 12.5%;
+        margin: 5px 0;
+    }
+    .exPtValue.selected {
+        background-color: #ffae29;
+        color: #fff;
+    }
+    .camera {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+    .TableFoot-Row-Cell-Left {
+        text-align: right;
+    }
+    #total-score {
+        font-weight: 500;
+        color: #ffae29;
+        font-size: 24px;
+        line-height: 37px;
+    }
+    .TableFoot-Row-Cell-Left .unit {
+        font-weight: 300;
+        color: #888888;
+        font-size: 24px;
+        line-height: 37px;
+    }
+
+    .TableFoot-Row-Cell-Right {
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 17px;
+        line-height: 24px;
+        color: #fff;
+        text-align: center;
+        vertical-align: center;
+    }
+    .TableFoot-Row-Cell-Right img {
+        width: 60vw;
+    }
+    .TableFoot > .TableFoot-Row > .TableFoot-Row-Cell {
+        /* flex item */
+        flex: 1 1 50%;
+    }
+
+    .final-title {
+        margin-top: 30px;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+        font-size: 17px;
+        line-height: 22px;
+        color: #39352b;
+    }
+
+    .final-ask-box {
+        border-radius: 10px;
+        bockground-color: #f6f9f9;
+        padding: 20px;
+    }
+
+    .final-ask-item {
+        padding-left: 34px;
+        background-image: url(../../svg/check_off.svg);
+        background-repeat: no-repeat;
+        background-position: left center;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 22px;
+        color: #39352b;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .final-ask-box textarea {
+        border: none;
+        width: 100%;
+        height: 200px;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 22px;
+        color: #39352b;
+    }
+
+
+        .photo-list {
+            /* normal */
+            height: 100px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            display: none;
+        }
+        .photo-list-inner {
+            /* flex container */
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            /* normal */
+            overflow-x: auto;
+        }
+        .photo-list-inner::-webkit-scrollbar {
+            display: none;
+        }
+        .photo-list-inner .photo-item {
+            /* flex item */
+            flex: none;
+            /* normal */
+            position: relative;
+            height: 65px;
+            padding: 5px 20px 0 0;
+        }
+        .photo-list-inner .photo-item img:first-child {
+            border-radius: 10px;
+        }
+        .photo-list-inner .photo-item .btn-del {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            z-index: 100;
+        }
+
+/* EmptyData */
+.EmptyData {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title"><div class="ActionBar-Title-Text"><span class="hangle" id="shop-name">가맹점명</span></div></div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+
+
+        <!-- TabBar -->
+        <div class="TabBar">
+            <div class="TabBar-Item-List">
+                <div class="TabBar-Item">
+                    <div class="TabBar-Item-Label"><div class="TabBar-Item-Label-Text"><span class="engnum">Q</span><span class="hangle">(품질)</span></div></div>
+                    <div class="TabBar-Item-Index selected"></div>
+                </div>
+                <div class="TabBar-Item">
+                    <div class="TabBar-Item-Label"><div class="TabBar-Item-Label-Text"><span class="engnum">S</span><span class="hangle">(서비스)</span></div></div>
+                    <div class="TabBar-Item-Index"></div>
+                </div>
+                <div class="TabBar-Item">
+                    <div class="TabBar-Item-Label"><div class="TabBar-Item-Label-Text"><span class="engnum">C</span><span class="hangle">(청결)</span></div></div>
+                    <div class="TabBar-Item-Index"></div>
+                </div>
+                <div class="TabBar-Item">
+                    <div class="TabBar-Item-Label"><div class="TabBar-Item-Label-Text"><span class="engnum">E</span><span class="hangle">(기타)</span></div></div>
+                    <div class="TabBar-Item-Index"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="TableBody">
+
+        </div>
+
+        <!-- TableFoot -->
+        <div class="TableFoot">
+            <div class="TableFoot-Row">
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left"><span class="engnum" id="total-score">0</span><span class="engnum unit"> / <span id="full-score" class="engnum">100</span></span></div>
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right"><img src="../../svg/btn_next.svg" onclick="onNext();"></div>
+            </div>
+        </div>
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

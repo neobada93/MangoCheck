@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40.545" height="40.342" viewBox="0 0 40.545 40.342">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #d4d1ca;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+
+      .cls-2 {
+        fill: #200e32;
+      }
+    </style>
+  </defs>
+  <g id="Iconly_Light_Chat" data-name="Iconly/Light/Chat" transform="translate(1.192 1)">
+    <g id="Chat">
+      <path id="Path" class="cls-1" d="M19.276,0A19.168,19.168,0,0,0,2.18,28.038l.384.748A2.5,2.5,0,0,1,2.747,30.7a37.959,37.959,0,0,0-1.371,4.454c0,.767.219,1.2,1.042,1.187a35.021,35.021,0,0,0,4.3-1.241,2.838,2.838,0,0,1,1.828.11c.53.256,1.609.913,1.646.913A19.176,19.176,0,1,0,19.276,0Z" transform="translate(0 0)"/>
+      <ellipse id="Oval" class="cls-2" cx="0.914" cy="0.913" rx="0.914" ry="0.913" transform="translate(9.22 18.254)"/>
+      <ellipse id="Oval-2" data-name="Oval" class="cls-2" cx="0.914" cy="0.913" rx="0.914" ry="0.913" transform="translate(18.361 18.254)"/>
+      <ellipse id="Oval-3" data-name="Oval" class="cls-2" cx="0.914" cy="0.913" rx="0.914" ry="0.913" transform="translate(27.503 18.254)"/>
+    </g>
+  </g>
+</svg>

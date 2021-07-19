@@ -1,0 +1,21 @@
+<svg id="txt_slogan" xmlns="http://www.w3.org/2000/svg" width="166" height="102" viewBox="0 0 166 102">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffeacc;
+      }
+
+      .cls-2 {
+        fill: #39352b;
+        font-size: 26px;
+        font-family: NotoSansKR-Medium, Noto Sans KR;
+        font-weight: 500;
+        letter-spacing: -0.075em;
+      }
+    </style>
+  </defs>
+  <rect id="point_underline" class="cls-1" width="70" height="10" rx="5" transform="translate(0 88.621)"/>
+  <text id="어서오세요_망고_어플입니다._로그인_해주세요." data-name="어서오세요 !
+망고 어플입니다.
+로그인 해주세요." class="cls-2" transform="translate(0 30)"><tspan x="0" y="0">어서오세요 !</tspan><tspan x="0" y="32">망고 어플입니다.</tspan><tspan x="0" y="64">로그인 해주세요.</tspan></text>
+</svg>

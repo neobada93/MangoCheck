@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <g id="btn_sell" transform="translate(0 -60)">
+    <rect id="사각형_72" data-name="사각형 72" class="cls-1" width="60" height="60" transform="translate(0 60)"/>
+    <g id="Iconly_Light_Chart" data-name="Iconly/Light/Chart" transform="translate(17.6 78)">
+      <g id="Chart" transform="translate(2 2)">
+        <path id="Line_182" class="cls-2" d="M.476,0V6.86" transform="translate(4.895 8.202)"/>
+        <path id="Line_183" class="cls-2" d="M.476,0V10.143" transform="translate(9.562 4.919)"/>
+        <path id="Line_184" class="cls-2" d="M.476,0V3.235" transform="translate(14.152 11.827)"/>
+        <path id="Path" class="cls-2" d="M14.686,0H5.314C2.048,0,0,2.312,0,5.585v8.83C0,17.688,2.038,20,5.314,20h9.371C17.962,20,20,17.688,20,14.415V5.585C20,2.312,17.962,0,14.686,0Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

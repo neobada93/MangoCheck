@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>가맹점정보 :: 점검관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    const name = qs.name;
+    const bza = qs.id;
+    function setData(res) {
+        let json = JSON.parse(res);
+        json = (json.length) ? json[0] : json;
+        $("#shop-name").html(json.bzanm);
+        $('#ceo .PageRow-Content').html(json.ownernm);
+        $('#address .PageRow-Content').html(json.adr);
+        $('#tel .PageRow-Content').html(json.telno);
+        $('#hp .PageRow-Content').html(json.hpno);
+        $('#bank .PageRow-Content').html(json.bank);
+        $('#account .PageRow-Content').html(json.acct);
+        $('#accounter .PageRow-Content').html(json.achr);
+        $('#money').html(Math.abs(+json.amt).toDigit());
+    }
+    function loadData() {
+        showLoading();
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=4&uid=${uid}&bza=${bza}`;
+        console.log(`url: ${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            hideLoading();
+            console.log( "Response: " + res );
+            setData(res);
+        });
+    }
+    init = ()=>{
+        $("#shop-name").html(name);
+        loadData();
+    };
+    </script>
+    <style>
+    .PageRows {
+        flex: 0 0 auto;
+        display: flex;
+        flex-flow: column nowrap;
+        padding-top: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    .PageRow-Gap {
+        flex: 0 0 10px;
+        display: flex;
+    }
+    .PageRow {
+        flex: 0 0 22px;
+        display: flex;
+    }
+    .PageRow .PageRow-Title {
+        flex: 0 0 95px;
+        color: #b8b6b1;
+        font-size: 15px;
+        line-height: 24px;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    .PageRow .PageRow-Content {
+        flow: 1 0 auto;
+        color: #39352b;
+        font-size: 15px;
+        line-height: 24px;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .PageExtraBox {
+        flex: 0 0 auto;
+        padding-top: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    .PageExtraBox .row1 {
+        color: #39352b;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 32px;
+        padding-right: 32px;
+    }
+    .PageExtraBox .row1 span:nth-child(1) {
+        padding-right: 32px;
+    }
+    .PageExtraBox .row1 .money {
+        font-weight: 500;
+        font-size: 22px;
+        line-height: 24px;
+        color: #ffae29;
+    }
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title"><div class="ActionBar-Title-Text"><span class="hangle" id="shop-name">가맹점명</span></div></div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <!-- rows -->
+        <div class="PageRows">
+            <div class="PageRow" id="ceo">
+                <div class="PageRow-Title">대표자</div>
+                <div class="PageRow-Content"></div>
+            </div>
+            <div class="PageRow-Gap"></div>
+            <div class="PageRow" id="address">
+                <div class="PageRow-Title">주소</div>
+                <div class="PageRow-Content"></div>
+            </div>
+            <div class="PageRow-Gap"></div>
+            <div class="PageRow" id="tel">
+                <div class="PageRow-Title">전화</div>
+                <div class="PageRow-Content engnum"></div>
+            </div>
+            <div class="PageRow-Gap"></div>
+            <div class="PageRow" id="hp">
+                <div class="PageRow-Title">휴대폰</div>
+                <div class="PageRow-Content engnum"></div>
+            </div>
+            <div class="PageRow-Gap"></div>
+            <div class="PageRow" id="bank">
+                <div class="PageRow-Title">은행</div>
+                <div class="PageRow-Content"></div>
+            </div>
+            <div class="PageRow-Gap"></div>
+            <div class="PageRow" id="account">
+                <div class="PageRow-Title">계좌번호</div>
+                <div class="PageRow-Content"></div>
+            </div>
+            <div class="PageRow-Gap"></div>
+            <div class="PageRow" id="accounter">
+                <div class="PageRow-Title">예금주</div>
+                <div class="PageRow-Content"></div>
+            </div>
+        </div>
+
+        <div class="PageExtraBox">
+            <div class="row1">
+                <span class="hangle">미수금</span>
+                <span class="money" id="money">0</span>
+                <span class="money">원</span>
+            </div>
+        </div>
+
+
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

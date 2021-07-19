@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #39352b;
+        stroke-linecap: round;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <g id="btn_select_arrow" transform="translate(26 26) rotate(180)">
+    <rect id="transparent_link_area" class="cls-1" width="26" height="26"/>
+    <g id="icon_select_arrow" transform="translate(-1.5 -3.5)">
+      <line id="left_line" class="cls-2" x1="4" y2="4" transform="translate(12.5 12.5)"/>
+      <line id="right_line" class="cls-2" x1="4" y1="4" transform="translate(12.5 16.5)"/>
+    </g>
+  </g>
+</svg>

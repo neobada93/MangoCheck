@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #b8b6b1;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <g id="btn_search" transform="translate(9 5)">
+    <rect id="사각형_222" data-name="사각형 222" class="cls-1" width="26" height="26" transform="translate(-9 -5)"/>
+    <g id="그룹_359" data-name="그룹 359" transform="translate(-3)">
+      <path id="cicle_line" class="cls-2" d="M1140.133,3248.267a6.133,6.133,0,1,0-6.133-6.133A6.132,6.132,0,0,0,1140.133,3248.267Z" transform="translate(-1134 -3236)"/>
+      <path id="line_45" class="cls-2" d="M1152.121,3254.152l-4.406-4.437" transform="translate(-1137.121 -3239.152)"/>
+    </g>
+  </g>
+</svg>

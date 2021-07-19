@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <g id="btn_capital_status" transform="translate(579 -180) rotate(90)">
+    <rect id="사각형_74" data-name="사각형 74" class="cls-1" width="60" height="60" transform="translate(180 579) rotate(-90)"/>
+    <g id="Iconly_Light_Wallet" data-name="Iconly/Light/Wallet" transform="translate(201 558.9) rotate(-90)">
+      <g id="Wallet" transform="translate(0 0)">
+        <path id="Stroke_3" data-name="Stroke 3" class="cls-2" d="M2.713.456H.3" transform="translate(11.937 12.187)"/>
+        <path id="Stroke_5" data-name="Stroke 5" class="cls-2" d="M5.248,0h8.643a5.248,5.248,0,0,1,5.248,5.248v7.177a5.248,5.248,0,0,1-5.248,5.248H5.248A5.248,5.248,0,0,1,0,12.425V5.248A5.248,5.248,0,0,1,5.248,0Z" transform="translate(0 0)"/>
+        <path id="Stroke_7" data-name="Stroke 7" class="cls-2" d="M0,.456H17.75" transform="translate(0.9 4.082)"/>
+      </g>
+    </g>
+  </g>
+</svg>

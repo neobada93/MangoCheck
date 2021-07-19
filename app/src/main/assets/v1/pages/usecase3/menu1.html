@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>평가이력 :: 점검관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    $.datepicker.setDefaults({
+        dateFormat: 'yymmdd'
+    });
+    function loadBranch() {
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=31&uid=${uid}`;
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            setBranchData(res);
+        });
+    }
+    function setBranchData(res) {
+        const json = JSON.parse(res);
+        if(json.length > 0) {
+            for(let i in json) {
+                $('#branch-list').append(`<option value="${json[i].bza}">${json[i].bzanm}</option>`);
+            }
+        }
+    }
+    function loadData() {
+        const stDt = $('#select-term-start').val().replace(/[-]/g, '');
+        const edDt = $('#select-term-end').val().replace(/[-]/g, '');
+        const bza = $('#branch-list').val();
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=3&uid=${uid}&stDt=${stDt}&edDt=${edDt}&bza=${bza}`;
+        console.log(`url: ${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            addItems(res);
+        });
+    }
+    function addItems(res) {
+        const json = JSON.parse(res);
+        $('.TableBody').html('');
+        if(json.length > 0) {
+            $('.EmptyData').hide();
+            for(let i in json) {
+                addItem(json[i]);
+            }
+        } else {
+            $('.EmptyData').show();
+        }
+    }
+
+    function addItem(item) {
+        var html = `
+            <div class="TableBodyRow-Head">
+                <div class="text-title">
+                    ${item.bzanm}
+                </div>
+                <div class="text-date">
+                    ${item.udt.toDate('. ')}
+                </div>
+            </div>
+            <div class="TableBodyRow-Body">
+                <div class="row">
+                    <div class="text-title">세부점수</div>
+                    <div class="text-content">
+                        <span class="image"><img src="../../svg/icon_q.svg"></span>
+                        <span class="point">${item.pt1}</span>
+                        <span class="image"><img src="../../svg/icon_s.svg"></span>
+                        <span class="point">${item.pt2}</span>
+                        <span class="image"><img src="../../svg/icon_c.svg"></span>
+                        <span class="point">${item.pt3}</span>
+                        <span class="image"><img src="../../svg/icon_e.svg"></span>
+                        <span class="point">${item.pt4}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-title">최종총점</div>
+                    <div class="text-content">
+                        <span class="score">${item.ptsum}</span>
+                        <span class="unit">/ 100</span>
+                    </div>
+                </div>
+            </div>`;
+        $('.TableBody').append(html);
+    }
+    init = () => {
+        $(`#select-term-start`).val(date());
+        $(`#select-term-end`).val(date());
+        loadBranch();
+        loadData();
+    };
+    </script>
+    <style>
+
+    /* select district */
+    .SelectDistrict {
+        /* flex item */
+        flex: 1 1 170px;
+
+        /*
+        background-color: #b8b6b1;
+        border-radius: 500px;
+        */
+    }
+    .SelectDistrict > .SelectDistrict-Select > select {
+        /*color: #fff;*/
+        font-size: 15px;
+        line-height: 24px;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    /* select term */
+    .SelectTerm {
+        /* flex item */
+        flex: 1 1 auto;
+
+        /**/
+        border: none;
+    }
+    .SelectTerm > .SelectTerm-Start-Input {
+        /* flex item */
+        flex: 1 1 78px;
+    }
+    .SelectTerm > .SelectTerm-End-Input {
+        /* flex item */
+        flex: 1 1 78px;
+    }
+    .SelectTerm > .SelectTerm-Search-Button {
+        /* flex item */
+        flex: 0 1 auto;
+    }
+
+    .TableBody {
+        padding-top: 18px;
+    }
+    .TableBodyRow {
+        border-top: 1px solid #39352b;
+    }
+    .TableBodyRow-Head {
+        display: flex;
+
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #d4d1ca;
+        padding-top: 8px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .TableBodyRow-Head .text-title {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        color: #39352b;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    .TableBodyRow-Head .text-date {
+        margin-left: auto;
+        font-family: 'Roboto', sans-serif;
+        color: #ffae29;
+        font-size: 15px;
+        line-height: 24px;
+    }
+    .TableBodyRow-Body {
+        padding-top: 14px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .TableBodyRow-Body .row {
+        display: flex;
+    }
+    .TableBodyRow-Body .row:nth-child(2) {
+        padding-top: 9px;
+    }
+    .TableBodyRow-Body .row .text-title {
+        color: #b8b6b1;
+        font-size: 15px;
+        line-height: 24px;
+        font-family: 'Noto Sans KR', sans-serif;
+
+    }
+    .TableBodyRow-Body .row .text-content {
+        color: #39352b;
+        font-size: 15px;
+        line-height: 26px;
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif;
+        vertical-align: middle;
+        padding-left: 27px;
+    }
+    .TableBodyRow-Body .row .point {
+        padding-right: 10px;
+        vertical-align: middle;
+    }
+    .TableBodyRow-Body .row .image,
+    .TableBodyRow-Body .row .image img {
+        vertical-align: middle;
+    }
+    .TableBodyRow-Body .row .score {
+        color: #39352b;
+        font-size: 15px;
+        line-height: 26px;
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif;
+        vertical-align: middle;
+    }
+    .TableBodyRow-Body .row .unit {
+        color: #d4d1ca;
+        font-size: 15px;
+        line-height: 26px;
+        font-weight: light;
+        font-family: 'Roboto', sans-serif;
+        vertical-align: middle;
+    }
+
+    /* ToolBar */
+    .ToolBar {
+        /* flex item */
+        flex: 0 0 38px;
+    }
+    .ToolBar2 {
+        /* flex item */
+        flex: 0 0 44px;
+        box-shadow: 0 3px 2px rgba(0,0,0,0.03);
+    }
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title"><div class="ActionBar-Title-Text"><span class="hangle">평가이력</span></div></div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <!-- ToolBar -->
+        <div class="ToolBar">
+
+            <!-- SelectDistrict -->
+            <div class="SelectDistrict">
+                <div class="SelectDistrict-Select">
+                    <select id="branch-list">
+                        <option value="">가맹점</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <!-- ToolBar -->
+        <div class="ToolBar ToolBar2">
+
+            <!-- SelectTerm -->
+            <div class="SelectTerm">
+                <div class="SelectTerm-Start-Input"><input type="text" id="select-term-start" class="date"></div>
+                <div class="SelectTerm-Start-Button Calendar-Button" data-target="select-term-start"><img src="../../svg/icon_calendar.svg"></div>
+                <div class="SelectTerm-Delim">~</div>
+                <div class="SelectTerm-End-Input"><input type="text" id="select-term-end" class="date"></div>
+                <div class="SelectTerm-End-Button Calendar-Button" data-target="select-term-end"><img src="../../svg/icon_calendar.svg"></div>
+                <div class="SelectTerm-Search-Button" onclick="loadData()"><img src="../../svg/btn_search.svg"></div>
+            </div>
+
+        </div>
+
+        <!-- EmptyData -->
+        <div class="EmptyData">
+            <div class="EmptyData-Item">
+                <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                <div class="EmptyData-Item-Text"><span class="hangle">평가이력이 존재하지 않습니다.</span></div>
+            </div>
+        </div>
+
+        <div class="TableBody">
+        </div>
+
+
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

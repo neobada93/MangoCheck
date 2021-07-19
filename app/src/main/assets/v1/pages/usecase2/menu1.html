@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>주문현황 :: 경영정보</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    init = ()=>{
+        $(`#select-date`).val(date());
+        getArea();
+        loadData();
+    };
+    function getArea() {
+        showLoading();
+        const url = `${api_domain}/uat/uia/actionMis.do?gbn=31&uid=${uid}`;
+        console.log(`경영정보::지역목록::URL::${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            const json = JSON.parse(data);
+            if(json.length > 0) {
+                for(let i in json) {
+                    $('#area').append(`<option value="${json[i].area}">${json[i].areanm}</option>`);
+                }
+            }
+        });
+    }
+    function loadData() {
+        showLoading();
+        const area = $('#area').val();
+        const srch = $('#srch').val();
+        const udt = $(`#select-date`).val().replace(/[-]/g, '');
+        const url = `${api_domain}/uat/uia/actionMis.do`;
+        const data = {gbn:3, uid, udt, area, srch};
+        console.log(`경영정보::주문현황::URL::${url}`);
+        $.ajax({
+            method: "POST",
+            url,
+            data,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            addItems(data);
+        });
+    }
+    function addItems(res) {
+        $('.totalCounter, .totalMoney').html('0');
+        const json = JSON.parse(res);
+        if(json.length > 0) {
+            $('.EmptyData').hide();
+            $('.TableBody').html('').show();
+            let count = 0;
+            let amt = 0;
+            for(let i in json) {
+                count += 1;
+                amt += parseInt(json[i].amt);
+                addItem(json[i]);
+            }
+            $('.totalCounter').html(`${count.toDigit()}`);
+            $('.totalMoney').html(`${amt.toDigit()}`);
+        } else {
+            $('.EmptyData').show();
+            $('.TableBody').html('').hide();
+        }
+    }
+    function addItem(item) {
+        var html = `
+        <div class="TableBody-Row" id="row-${item.bza}">
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Left">
+                <div class="TableBody-Row-Cell-Text"><span class="hangle">${item.bzanm}</span></div>
+            </div>
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Right">
+                <div class="TableBody-Row-Cell-Text"><span class="engnum">${item.amt.toDigit()}</span></div>
+            </div>
+        </div>`;
+        $('.TableBody').append(html);
+    }
+    </script>
+    <style>
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell {
+        /* flex item */
+        flex: 0 0 auto;
+    }
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell-Gap {
+        /* flex item */
+        flex: 1 1 auto;
+    }
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title">
+                <div class="ActionBar-Title-Text">
+                    <span class="hangle">주문현황</span>
+                </div>
+            </div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <!-- ToolBar -->
+        <div class="ToolBar">
+            <!-- SelectDate -->
+            <div class="SelectDate">
+                <div class="SelectDate-Input"><input type="text" id="select-date" class="date" onchange="loadData()"></div>
+                <div class="SelectDate-Button Calendar-Button" data-target="select-date"><img src="../../svg/icon_calendar.svg"></div>
+            </div>
+
+            <!-- gap -->
+            <div class="flex-gap"></div>
+
+            <!-- SelectDistrict -->
+            <div class="SelectDistrict">
+                <div class="SelectDistrict-Select">
+                    <select id="area" onchange="loadData()">
+                        <option value="">지역</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- gap -->
+            <div class="flex-gap"></div>
+
+            <!-- SearchKeyword -->
+            <div class="SearchKeyword">
+                <div class="SearchKeyword-Input"><input type="text" id="srch" placeholder="가맹점명"></div>
+                <div class="SearchKeyword-Button" onclick="loadData()"><img src="../../svg/btn_search.svg"></div>
+            </div>
+        </div>
+
+        <!-- TableHead -->
+        <div class="TableHead">
+            <div class="TableHead-Row">
+                <div class="TableHead-Row-Cell"><span class="hangle">가맹점</span></div>
+                <div class="TableHead-Row-Cell TableHead-Row-Cell-Gap"></div>
+                <div class="TableHead-Row-Cell"><span class="hangle">금액</span></div>
+            </div>
+        </div>
+
+        <!-- EmptyData -->
+        <div class="EmptyData">
+            <div class="EmptyData-Item">
+                <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                <div class="EmptyData-Item-Text"><span class="hangle">등록된 데이터가 없습니다.</span></div>
+            </div>
+        </div>
+
+        <!-- TableBody -->
+        <div class="TableBody">
+        </div>
+
+        <!-- TableFoot -->
+        <div class="TableFoot">
+            <div class="TableFoot-Row">
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left">
+                    <span class="hangle kickup">총</span>
+                    <span class="totalCounter">0</span>
+                    <span class="hangle kickup">개</span>
+                </div>
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right">
+                    <span class="totalMoney">0</span>
+                    <span class="hangle kickup">원</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

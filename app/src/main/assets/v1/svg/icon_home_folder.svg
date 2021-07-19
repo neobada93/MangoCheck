@@ -1,0 +1,24 @@
+<svg id="btn_order" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <rect id="사각형_71" data-name="사각형 71" class="cls-1" width="60" height="60"/>
+  <g id="Iconly_Light_Folder" data-name="Iconly/Light/Folder" transform="translate(18.6 19)">
+    <g id="Folder" transform="translate(2.086 2.086)">
+      <path id="Path_33957" class="cls-2" d="M17.571,12.359c0,3.28-1.933,5.213-5.213,5.213H5.221C1.933,17.571,0,15.638,0,12.359V5.213C0,1.933,1.2,0,4.485,0H6.317A2.092,2.092,0,0,1,7.991.837L8.828,1.95a2.1,2.1,0,0,0,1.673.837h2.594c3.288,0,4.5,1.673,4.5,5.02Z" transform="translate(0)"/>
+      <path id="Line_194" class="cls-2" d="M0,.456H8.794" transform="translate(4.384 10.739)"/>
+    </g>
+  </g>
+</svg>

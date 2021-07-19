@@ -1,0 +1,236 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>자금현황 :: 경영정보</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    init = ()=>{
+        $(`#select-date`).val(date());
+        loadData();
+    };
+    function loadData() {
+        showLoading();
+        const udt = $('#select-date').val().replace(/[-]/g,'');
+        const area = $('#area').val();
+        const url = `${api_domain}/uat/uia/actionMis.do?gbn=9&uid=${uid}&udt=${udt}`;
+        console.log(`경영정보::자금현황::URL::${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            addItems(data);
+        });
+    }
+    function addItems(res) {
+        const json = JSON.parse(res);
+        let inSum = 0;
+        let outSum = 0;
+        let remainSum = 0;
+        if(json.length > 0) {
+            $('.EmptyData').hide();
+            $('.TableBody').html('').show();
+            for(let i in json) {
+                addItem(json[i]);
+                inSum += parseInt(json[i].inAmt);
+                outSum += parseInt(json[i].outAmt);
+                remainSum += parseInt(json[i].remainAmt);
+            }
+            $('.TableBody').scrollTop(0);
+        } else {
+            $('.EmptyData').show();
+            $('.TableBody').html('').hide();
+        }
+        $('#inSum').html(`${inSum.toDigit()}`);
+        $('#outSum').html(`${outSum.toDigit()}`);
+        $('#remainSum').html(`${remainSum.toDigit()}`);
+    }
+    function addItem(item) {
+        var html = `
+        <div class="TableBody-Row" id="row-${item.bankCd}" onclick="openActivity('경영정보:자금현황상세', ['${item.bankCd}', '${$('#select-date').val().replace(/[-]/g,'')}']);">
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Left">
+                <div class="TableBody-Row-Cell-Text">${item.bankNm}</div>
+                <div class="TableBody-Row-Cell-Text">${item.acnNo}</div>
+            </div>
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Right">`;
+        if(parseInt(item.inAmt)) {
+            html += `<div class="inAmt"><span class="engnum">${item.inAmt.toDigit()}</span> <img src="../../svg/btn_sales.svg"></div>`;
+        }
+        if(parseInt(item.outAmt)) {
+            html += `<div class="outAmt"><span class="engnum">${item.outAmt.toDigit()}</span> <img src="../../svg/btn_sellout.svg"></div>`;
+        }
+        if(parseInt(item.remainAmt)) {
+            html += `<div class="remainAmt"><span class="engnum">${item.remainAmt.toDigit()}</span> <img src="../../svg/btn_balance.svg"></div>`;
+        }
+            html += `
+            </div>
+        </div>`;
+        $('.TableBody').append(html);
+    }
+    </script>
+    <style>
+
+.TableFoot > .TableFoot-Row {
+    /* flex item */
+    flex: 0 0 auto;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right {
+    flex-direction: column;
+    justify-content: center;
+    align-content: flex-end;
+    align-items: flex-end;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right .amt1 {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 20px;
+    color: #00b896;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right .amt2 {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 20px;
+    color: #ffae29;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right .amt3 {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 20px;
+    color: #39352b;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell .TableFoot-Row-Cell-Text {
+    display: flex;
+    align-items: center;
+}
+.foot-title {
+    font-size: 15px;
+    line-height: 24px;
+    color: #b8b6b1;
+}
+
+.TableHead > .TableHead-Row {
+    justify-content: space-between;
+}
+.TableHead > .TableHead-Row > .TableHead-Row-Cell:nth-child(1) {
+    /* flex item */
+    flex: auto;
+}
+.TableHead > .TableHead-Row > .TableHead-Row-Cell:nth-child(2) {
+    /* flex item */
+    flex: auto;
+}
+
+.TableBody > .TableBody-Row {
+    /* flex item */
+    flex: 0 0 auto;
+    justify-content: space-between;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell {
+    display: flex;
+    flex-direction: column;
+    padding-top: 7px;
+    padding-bottom: 7px;
+
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Left {
+    align-items: flex-start;
+    justify-content: center;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Right {
+    align-items: flex-end;
+    justify-content: center;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Right > div {
+    display: flex;
+    align-items: center;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Right > .inAmt {
+    color: #00b896;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Right > .outAmt {
+    color: #ffae29;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Right > .remainAmt {
+    color: #39352b;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell.TableBody-Row-Cell-Right > div > span {
+    margin-right: 5px;
+}
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title">
+                <div class="ActionBar-Title-Text">
+                    <span class="hangle">자금현황</span>
+                </div>
+            </div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <!-- ToolBar -->
+        <div class="ToolBar">
+            <!-- SelectDate -->
+            <div class="SelectDate">
+                <div class="SelectDate-Input"><input type="text" id="select-date" class="date" onchange="loadData()"></div>
+                <div class="SelectDate-Button Calendar-Button" data-target="select-date"><img src="../../svg/icon_calendar.svg"></div>
+            </div>
+        </div>
+
+        <!-- TableHead -->
+        <div class="TableHead">
+            <div class="TableHead-Row">
+                <div class="TableHead-Row-Cell"><span class="hangle">은행/계좌</span></div>
+                <div class="TableHead-Row-Cell"><span class="hangle">입금/출금/잔액</span></div>
+            </div>
+        </div>
+
+        <!-- EmptyData -->
+        <div class="EmptyData">
+            <div class="EmptyData-Item">
+                <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                <div class="EmptyData-Item-Text"><span class="hangle">등록된 데이터가 없습니다.</span></div>
+            </div>
+        </div>
+
+        <!-- TableBody -->
+        <div class="TableBody">
+        </div>
+
+        <!-- TableFoot -->
+        <div class="TableFoot">
+            <div class="TableFoot-Row">
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left">
+                    <span class="hangle foot-title">합계</span>
+                </div>
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right">
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt1" id="inSum">0</span> <span class="hangle kickup">원</span> <img src="../../svg/btn_sales.svg"></div>
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt2" id="outSum">0</span> <span class="hangle kickup">원</span> <img src="../../svg/btn_sellout.svg"></div>
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt3" id="remainSum">0</span> <span class="hangle kickup">원</span> <img src="../../svg/btn_balance.svg"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

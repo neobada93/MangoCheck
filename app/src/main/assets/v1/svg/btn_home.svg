@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="242" height="72" viewBox="0 0 242 72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffae29;
+      }
+
+      .cls-2 {
+        fill: #fff;
+        font-size: 17px;
+        font-family: NotoSansKR-Regular, Noto Sans KR;
+        letter-spacing: -0.06em;
+      }
+
+      .cls-3 {
+        filter: url(#bg_btn_registration);
+      }
+    </style>
+    <filter id="bg_btn_registration" x="0" y="0" width="242" height="72" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#ffae29" flood-opacity="0.302"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="btn_confirm" transform="translate(-118 -27)">
+    <g class="cls-3" transform="matrix(1, 0, 0, 1, 118, 27)">
+      <rect id="bg_btn_registration-2" data-name="bg_btn_registration" class="cls-1" width="212" height="42" rx="21" transform="translate(15 12)"/>
+    </g>
+    <text id="홈으로" class="cls-2" transform="translate(239 66)"><tspan x="-22.44" y="0">홈으로</tspan></text>
+  </g>
+</svg>

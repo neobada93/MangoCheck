@@ -1,0 +1,21 @@
+<svg id="speech_bubble" xmlns="http://www.w3.org/2000/svg" width="68" height="30.875" viewBox="0 0 68 30.875">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #7d7a73;
+      }
+
+      .cls-2 {
+        fill: #fff;
+        font-size: 13px;
+        font-family: NotoSansKR-Regular, Noto Sans KR;
+        letter-spacing: -0.075em;
+      }
+    </style>
+  </defs>
+  <g id="bg_speech_bubble">
+    <path id="round_square" class="cls-1" d="M12,0H68a0,0,0,0,1,0,0V12A12,12,0,0,1,56,24H12A12,12,0,0,1,0,12v0A12,12,0,0,1,12,0Z" transform="translate(0 6.875)"/>
+    <path id="arrow" class="cls-1" d="M1262,46V39.125L1255.125,46Z" transform="translate(-1194 -39.125)"/>
+  </g>
+  <text id="평가이력" class="cls-2" transform="translate(34 23.875)"><tspan x="-22.458" y="0">평가이력</tspan></text>
+</svg>

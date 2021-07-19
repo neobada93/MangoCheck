@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>세부기준 :: 점검관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    const bza = qs.id;
+    const scateNm = qs.scateNm;
+    const bcateCd = qs.bcateCd;
+    const mcateCd = qs.mcateCd;
+    const scateCd = qs.scateCd;
+    init = ()=>{
+        $('.scateNm').html(scateNm);
+        loadData();
+    };
+
+    function loadData() {
+        $('.EmptyData').show();
+        $('.items').hide();
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=6&uid=${uid}&bcateCd=${bcateCd}&mcateCd=${mcateCd}&scateCd=${scateCd}&bza=${bza}`;
+        console.log(`sub call url: ${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            const json = JSON.parse(res);
+            let html = '';
+            if(json.length > 0) {
+                $('.EmptyData').hide();
+                for(let z=0; z<json.length; z++) {
+                    html += `<div class="item">${json[z].dtlNm}</div>`;
+                }
+                $('.items').html(html);
+                $('.items').show();
+            }
+        })
+    }
+    </script>
+    <style>
+
+        /* EmptyData */
+        .EmptyData {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .scateNm {
+            padding: 11px 15px;
+            box-shadow: 0 3px 2px rgba(0,0,0,0.03);
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 22px;
+            color: #39352b;
+        }
+        .items {
+            padding: 15px;
+        }
+        .item {
+            padding: 9px 18px 6px 18px;
+            background-image: url(../../svg/icon_check1.svg);
+            background-repeat: no-repeat;
+            background-position: left center;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 24px;
+            color: #39352b;
+        }
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title"><div class="ActionBar-Title-Text"><span class="hangle" id="shop-name">세부기준</span></div></div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <div class="scateNm"></div>
+
+
+        <!-- EmptyData -->
+        <div class="EmptyData">
+            <div class="EmptyData-Item">
+                <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                <div class="EmptyData-Item-Text"><span class="hangle">등록된 공지사항이 없습니다.</span></div>
+            </div>
+        </div>
+
+        <div class="items"></div>
+
+    </div>
+</body>
+</html>

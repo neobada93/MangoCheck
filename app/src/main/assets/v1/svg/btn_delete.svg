@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #b8b6b1;
+      }
+
+      .cls-2, .cls-4 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke-linecap: round;
+        stroke-width: 2px;
+      }
+
+      .cls-3 {
+        stroke: none;
+      }
+    </style>
+  </defs>
+  <g id="btn_delete" transform="translate(-80 -281)">
+    <g id="타원_58" data-name="타원 58" class="cls-1" transform="translate(80 281)">
+      <circle class="cls-3" cx="10" cy="10" r="10"/>
+      <circle class="cls-4" cx="10" cy="10" r="9.5"/>
+    </g>
+    <line id="선_5" data-name="선 5" class="cls-2" x2="5" y2="5" transform="translate(87.5 288.5)"/>
+    <line id="선_6" data-name="선 6" class="cls-2" x1="5" y2="5" transform="translate(87.5 288.5)"/>
+  </g>
+</svg>

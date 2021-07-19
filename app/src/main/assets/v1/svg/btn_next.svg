@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="242" height="72" viewBox="0 0 242 72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke: #ffae29;
+        stroke-width: 2px;
+      }
+
+      .cls-2 {
+        fill: #ffae29;
+        font-size: 17px;
+        font-family: NotoSansKR-Regular, Noto Sans KR;
+        letter-spacing: -0.06em;
+      }
+
+      .cls-3 {
+        stroke: none;
+      }
+
+      .cls-4 {
+        fill: none;
+      }
+
+      .cls-5 {
+        filter: url(#bg_btn_next);
+      }
+    </style>
+    <filter id="bg_btn_next" x="0" y="0" width="242" height="72" filterUnits="userSpaceOnUse">
+      <feOffset dx="3" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#ffae29" flood-opacity="0.302"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="btn_next" transform="translate(-107 12)">
+    <g class="cls-5" transform="matrix(1, 0, 0, 1, 107, -12)">
+      <g id="bg_btn_next-2" data-name="bg_btn_next" class="cls-1" transform="translate(12 12)">
+        <rect class="cls-3" width="212" height="42" rx="21"/>
+        <rect class="cls-4" x="1" y="1" width="210" height="40" rx="20"/>
+      </g>
+    </g>
+    <text id="다음단계" class="cls-2" transform="translate(225 27)"><tspan x="-29.75" y="0">다음단계</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>주문현황(상세) :: 3자물류</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    function loadData() {
+        showLoading();
+        const url = api_domain + "/uat/uia/actionShip.do";
+        console.log( "Request: Login Id = " + uid );
+        console.log( "Request: stDt = " + stDt );
+        console.log( "Request: edDt = " + edDt );
+        console.log( "Request: bza = " + bza );
+        $.ajax({
+            method: "POST",
+            url,
+            data: { gbn: 2, uid, stDt, edDt, bza }
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            addItems(data);
+        });
+    }
+    function addItems(res) {
+        $('.totalCounter, .totalMoney').html('0');
+        const json = JSON.parse(res);
+        if(json.length > 0) {
+            $('.EmptyData').hide();
+            $('.TableBody').html('').show();
+            let count = 0;
+            let price = 0;
+            for(let i in json) {
+                count += 1;
+                price += parseInt(json[i].price);
+                addItem(json[i]);
+            }
+            $('.totalCounter').html(`${count.toDigit()}`);
+            $('.totalMoney').html(`${price.toDigit()}`);
+        } else {
+            $('.EmptyData').show();
+            $('.TableBody').html('').hide();
+        }
+    }
+    function addItem(item) {
+        var html = `
+        <div class="TableBody-Row" id="row-${item.bza}">
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Left">
+                <div class="TableBody-Row-Cell-Text"><span class="hangle">${item.item}</span></div>
+            </div>
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Right">
+                <div class="TableBody-Row-Cell-Text"><span class="engnum">${item.qty.toDigit()}</span></div>
+            </div>
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Right">
+                <div class="TableBody-Row-Cell-Text"><span class="engnum">${item.price.toDigit()}</span></div>
+            </div>
+        </div>`;
+        $('.TableBody').append(html);
+    }
+    init = ()=>{
+        $('.ActionBar-Title-Text span').html('주문현황 - ' + name);
+        loadData();
+    };
+    const uid = getLoginedId();
+    const name = qs.name;
+    const stDt = qs.startDate.replace(/[-]/g, '');
+    const edDt = qs.endDate.replace(/[-]/g, '');
+    const bza = qs.id;
+    </script>
+    <style>
+
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell {
+        /* flex item */
+        flex: 0 0 auto;
+    }
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell-Gap1 {
+        /* flex item */
+        flex: 1 1 auto;
+    }
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell-Gap2 {
+        /* flex item */
+        flex: 0 0 60px;
+    }
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell:first-child {
+        padding-left: 15px;
+    }
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell:last-child {
+        padding-right: 15px;
+    }
+
+
+    .TableBody > .TableBody-Row > .TableBody-Row-Cell:nth-child(1) {
+        /* flex item */
+        flex: 1 0 auto;
+        /* etc */
+        width: calc(100% - 155px);
+        color: #39352b;
+        font-size: 15px;
+        line-height: 24px;
+        letter-spacing: -0.9px;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    .TableBody > .TableBody-Row > .TableBody-Row-Cell:nth-child(2) {
+        /* flex item */
+        flex: 0 0 55px;
+        /* etc */
+        width: 55px;
+        color: #39352b;
+        font-size: 15px;
+        line-height: 24px;
+        font-family: 'Roboto', sans-serif;
+    }
+    .TableBody > .TableBody-Row > .TableBody-Row-Cell:nth-child(3) {
+        /* flex item */
+        flex: 0 0 100px;
+        /* etc */
+        width: 100px;
+        color: #39352b;
+        font-size: 15px;
+        line-height: 24px;
+        font-family: 'Roboto', sans-serif;
+    }
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title"><div class="ActionBar-Title-Text"><span class="hangle">주문현황</span></div></div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <!-- TableHead -->
+        <div class="TableHead">
+            <div class="TableHead-Row">
+                <div class="TableHead-Row-Cell"><span class="hangle">품목</span></div>
+                <div class="TableHead-Row-Cell TableHead-Row-Cell-Gap1"></div>
+                <div class="TableHead-Row-Cell"><span class="hangle">수량</span></div>
+                <div class="TableHead-Row-Cell TableHead-Row-Cell-Gap2"></div>
+                <div class="TableHead-Row-Cell"><span class="hangle">금액</span></div>
+            </div>
+        </div>
+
+        <!-- EmptyData -->
+        <div class="EmptyData">
+            <div class="EmptyData-Item">
+                <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                <div class="EmptyData-Item-Text"><span class="hangle">등록된 데이터가 없습니다.</span></div>
+            </div>
+        </div>
+
+        <!-- TableBody -->
+        <div class="TableBody">
+        </div>
+
+        <!-- TableFoot -->
+        <div class="TableFoot">
+            <div class="TableFoot-Row">
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left">
+                    <span class="hangle kickup">총</span> &nbsp;
+                    <span class="totalCounter">0</span>
+                    <span class="hangle kickup">개</span></div>
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right">
+                    <span class="totalMoney">0</span>
+                    <span class="hangle kickup">원</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </defs>
+  <g id="btn__profit" data-name="btn_ profit" transform="translate(0 -120)">
+    <rect id="사각형_73" data-name="사각형 73" class="cls-1" width="60" height="60" transform="translate(0 120)"/>
+    <g id="Iconly_Light_Activity" data-name="Iconly/Light/Activity" transform="translate(17.6 138)">
+      <g id="Activity" transform="translate(2 1.5)">
+        <path id="Path_33966" class="cls-2" d="M0,4.989,2.993,1.1,6.407,3.78,9.336,0" transform="translate(5.245 8.293)"/>
+        <circle id="Ellipse_741" class="cls-2" cx="1.922" cy="1.922" r="1.922" transform="translate(16.073 0.778)"/>
+        <path id="Path" class="cls-2" d="M12.146,0H4.879C1.867,0,0,2.133,0,5.144v8.082c0,3.011,1.831,5.135,4.879,5.135h8.6c3.011,0,4.879-2.124,4.879-5.135V6.188" transform="translate(0.778 1.62)"/>
+      </g>
+    </g>
+  </g>
+</svg>

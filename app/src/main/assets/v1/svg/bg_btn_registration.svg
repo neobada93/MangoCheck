@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="242" height="72" viewBox="0 0 242 72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #00b896;
+      }
+
+      .cls-2 {
+        filter: url(#bg_btn_registration);
+      }
+    </style>
+    <filter id="bg_btn_registration" x="0" y="0" width="242" height="72" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#00b896" flood-opacity="0.4"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="cls-2" transform="matrix(1, 0, 0, 1, 0, 0)">
+    <rect id="bg_btn_registration-2" data-name="bg_btn_registration" class="cls-1" width="212" height="42" rx="21" transform="translate(15 12)"/>
+  </g>
+</svg>

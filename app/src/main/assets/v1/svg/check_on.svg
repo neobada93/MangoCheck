@@ -1,0 +1,19 @@
+<svg id="check_on" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffae29;
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <circle id="타원_20" data-name="타원 20" class="cls-1" cx="12" cy="12" r="12"/>
+  <path id="패스_1" data-name="패스 1" class="cls-2" d="M-1014-1117.2l2.866,2.865,5.514-5.514" transform="translate(1021.5 1129.346)"/>
+</svg>

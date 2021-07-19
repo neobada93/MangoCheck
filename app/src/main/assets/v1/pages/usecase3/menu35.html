@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>가맹점평가완료 :: 점검관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    const name = qs.name;
+    const bza = qs.id;
+    let total_score = 0;
+    init = ()=>{
+        $("#shop-name").html(name);
+        $(".today").html(date());
+        loadData();
+    };
+
+    function loadData() {
+        const url = `${api_domain}/uat/uia/actionChk.do?gbn=10&uid=${uid}&bza=${bza}`;
+        console.log(`url: ${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( res ) {
+            console.log( "Response: " + res );
+            const json = JSON.parse(res);
+            updateElement(json);
+        });
+    }
+
+    function updateElement(list) {
+        let html = ``;
+        let bcateNm = '';
+        let mcateNm = '';
+        for(let i=0; i<list.length; i++) {
+            const item = list[i];
+            total_score += parseInt(item.exPt);
+            $('#full-score').html(item.totPt);
+            $('#total-score').html(total_score);
+            if(bcateNm != item.bcateNm) {
+                html += `
+                    <div class="bcateNm">${item.bcateNm}</div>
+                `;
+                bcateNm = item.bcateNm;
+            }
+            if(mcateNm != item.mcateNm) {
+                html += `
+                    <div class="mcateNm">${item.mcateNm}</div>
+                `;
+                mcateNm = item.mcateNm;
+            }
+            html += `
+                <div class="scateNm">
+                    <div class="title">${item.scateNm}</div>
+                    <div class="point">${item.exPt} / ${item.point}점</div>
+                </div>
+            `;
+        }
+        html = $(html);
+        $('.TableBody').append(html);
+    }
+    </script>
+    <style>
+        .bcateNm {
+            height: 73px;
+            flex: 0 0 auto;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            color: #00b896;
+            font-weight: 700;
+            background: linear-gradient(#ffffff, #f6f9f9);
+            padding: 0 15px;
+        }
+        .mcateNm {
+            height: 50px;
+            flex: 0 0 auto;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #39352b;
+            font-weight: 500;
+            padding: 0 15px;
+        }
+        .scateNm {
+            flex: 0 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #39352b;
+            border-bottom: 1px solid #f2f1ef;
+            padding: 10px 0;
+        }
+        .scateNm .title {
+            margin-left: 15px;
+        }
+        .scateNm .point {
+            flex: 0 0 90px;
+            color: #ffae29;
+            margin-right: 15px;
+            text-align: right;
+        }
+        .TableFoot > .TableFoot-Row {
+            /* flex item */
+            flex: 0 0 69px;
+            /* etc */
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Left {
+            font-size: 24px;
+            line-height: 37px;
+            text-align: right;
+        }
+        #total-score {
+            color: #ffae29;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div class="Page">
+    <!-- Page :: Start -->
+
+    <!-- ActionBar -->
+    <div class="ActionBar">
+        <div class="ActionBar-Title"><div class="ActionBar-Title-Text"><span class="hangle" id="shop-name">가맹점명</span></div></div>
+        <div class="ActionBar-More"></div>
+    </div>
+
+    <div class="TableBody">
+
+    </div>
+
+    <!-- TableFoot -->
+    <div class="TableFoot">
+        <div class="TableFoot-Row">
+            <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left"><span class="engnum" id="total-score">0</span><span class="engnum unit"> / <span id="full-score" class="engnum">100</span></span></div>
+            <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right"><img src="../../svg/btn_home.svg" onclick="openActivity('점검관리:메인');"></div>
+        </div>
+    </div>
+    <!-- Page :: End -->
+</div>
+</body>
+</html>

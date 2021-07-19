@@ -1,0 +1,30 @@
+<svg id="icon_note" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-4 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #ffae29;
+      }
+
+      .cls-2 {
+        stroke-linecap: round;
+      }
+
+      .cls-3 {
+        stroke: none;
+      }
+    </style>
+  </defs>
+  <g id="cicle" class="cls-1">
+    <circle class="cls-3" cx="7.5" cy="7.5" r="7.5"/>
+    <circle class="cls-4" cx="7.5" cy="7.5" r="7"/>
+  </g>
+  <line id="line" class="cls-2" y2="4" transform="translate(7.5 4.5)"/>
+  <g id="dot" class="cls-1" transform="translate(7 10)">
+    <circle class="cls-3" cx="0.5" cy="0.5" r="0.5"/>
+    <circle class="cls-4" cx="0.5" cy="0.5"/>
+  </g>
+</svg>

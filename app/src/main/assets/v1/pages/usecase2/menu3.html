@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>이익현황 :: 경영정보</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+    <script src="../../js/jquery-ui.js"></script>
+    <script src="../../js/script.js"></script>
+    <script>
+    const uid = getLoginedId();
+    init = ()=>{
+        $(`#select-date`).val(date());
+        getArea();
+        loadData();
+    };
+    function getArea() {
+        showLoading();
+        const url = `${api_domain}/uat/uia/actionMis.do?gbn=31&uid=${uid}`;
+        console.log(`경영정보::지역목록::URL::${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            const json = JSON.parse(data);
+            if(json.length > 0) {
+                for(let i in json) {
+                    $('#area').append(`<option value="${json[i].area}">${json[i].areanm}</option>`);
+                }
+            }
+        });
+    }
+    function getMMAmt() {
+        showLoading();
+        const udt = $('#select-date').val().replace(/[-]/g,'');
+        const area = $('#area').val();
+        const url = `${api_domain}/uat/uia/actionMis.do?gbn=71&uid=${uid}&udt=${udt}&area=${area}`;
+        console.log(`경영정보::당해월매출::URL::${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            const json = JSON.parse(data);
+            $('#mm-amt1').html(`0`);
+            $('#mm-amt2').html(`0`);
+            if(json.length > 0) {
+                for(let i in json) {
+                    $('#mm-amt1').html(`${json[i].amt1.toDigit()}`);
+                    $('#mm-amt2').html(`${json[i].amt2.toDigit()}`);
+                }
+            }
+        });
+    }
+    function getYYAmt() {
+        showLoading();
+        const udt = $('#select-date').val().replace(/[-]/g,'');
+        const area = $('#area').val();
+        const url = `${api_domain}/uat/uia/actionMis.do?gbn=72&uid=${uid}&udt=${udt}&area=${area}`;
+        console.log(`경영정보::당해연도매출::URL::${url}`);
+        $.ajax({
+            method: "GET",
+            url,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            const json = JSON.parse(data);
+            $('#yy-amt1').html(`0`);
+            $('#yy-amt2').html(`0`);
+            if(json.length > 0) {
+                for(let i in json) {
+                    $('#yy-amt1').html(`${json[i].amt1.toDigit()}`);
+                    $('#yy-amt2').html(`${json[i].amt2.toDigit()}`);
+                }
+            }
+        });
+    }
+    function loadData() {
+        showLoading();
+        const udt = $('#select-date').val().replace(/[-]/g,'');
+        const area = $('#area').val();
+        const url = `${api_domain}/uat/uia/actionMis.do?gbn=7&uid=${uid}&udt=${udt}&area=${area}`;
+        console.log(`경영정보::이익현황::URL::${url}`);
+        $.ajax({
+            method: "POST",
+            url,
+        })
+        .done(function( data ) {
+            hideLoading();
+            console.log( "Response: " + data );
+            //data = `[{"larnm":"삼성휴대폰","amt1":"660000","amt2":"660000"},{"larnm":"곡물그대로21 1kg","amt1":"44000","amt2":"44000"},{"larnm":"휴대폰본체","amt1":"3960000","amt2":"3960000","largbn":"계육"},{"larnm":"신선 넓적다리","amt1":"25000","amt2":"25000","largbn":"계육"},{"larnm":"신선육계(등급)","amt1":"41800","amt2":"41800","largbn":"계육"},{"larnm":"신선 날개","amt1":"96140","amt2":"96140","largbn":"계육"},{"larnm":"신선9호(육계)","amt1":"27500","amt2":"27500","largbn":"계육"},{"larnm":"신선등외-12호","amt1":"28600","amt2":"28600","largbn":"계육"}]`;
+            addItems(data);
+        });
+        getMMAmt();
+        getYYAmt();
+    }
+    function addItems(res) {
+        const json = JSON.parse(res);
+        if(json.length > 0) {
+            $('.EmptyData').hide();
+            $('.TableBody').html('').show();
+            for(let i in json) {
+                addItem(json[i]);
+            }
+            $('.TableBody').scrollTop(0);
+        } else {
+            $('.EmptyData').show();
+            $('.TableBody').html('').hide();
+        }
+    }
+    function addItem(item) {
+        var html = `
+        <div class="TableBody-Row" id="row-${item.bza}">
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Left">
+                <div class="TableBody-Row-Cell-Text"><span class="hangle">${item.largbn || '&nbsp;'}</span></div>
+            </div>
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Left">
+                <div class="TableBody-Row-Cell-Text"><span class="hangle">${item.larnm}</span></div>
+            </div>
+            <div class="TableBody-Row-Cell TableBody-Row-Cell-Right">
+                <div class="TableBody-Row-Cell-Text"><span class="engnum">${item.amt1.toDigit()}</span> <img src="../../svg/icon_sales.svg"></div>
+                <div class="TableBody-Row-Cell-Text"><span class="engnum">${item.amt2.toDigit()}</span> <img src="../../svg/icon_sellout.svg"></div>
+            </div>
+        </div>`;
+        $('.TableBody').append(html);
+    }
+    </script>
+    <style>
+
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right {
+    flex-direction: column;
+    justify-content: center;
+    align-content: flex-end;
+    align-items: flex-end;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right * {
+    vertical-align: middle;
+    font-size: 11px;
+    line-height: 24px;
+}
+.foot-title {
+    font-size: 15px;
+    line-height: 24px;
+    color: #b8b6b1;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right .amt1 {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 20px;
+    color: #00b896;
+}
+.TableFoot > .TableFoot-Row > .TableFoot-Row-Cell.TableFoot-Row-Cell-Right .amt2 {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 20px;
+    color: #ffae29;
+}
+
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell:nth-child(1) {
+        /* flex item */
+        flex: 0 0 60px;
+        justify-content: flex-start;
+    }
+    .TableHead > .TableHead-Row > .TableHead-Row-Cell:nth-child(2) {
+        /* flex item */
+        flex: 0 0 120px;
+    }
+
+.TableBody > .TableBody-Row {
+        /* flex item */
+        flex: 0 0 66px;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell:nth-child(1) {
+        /* flex item */
+        flex: 0 0 80px;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell-Right {
+    flex-direction: column;
+    justify-content: center;
+    align-content: flex-end;
+    align-items: flex-end;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+.TableBody > .TableBody-Row > .TableBody-Row-Cell-Right * {
+    vertical-align: middle;
+    font-size: 15px;
+    line-height: 24px;
+}
+    </style>
+</head>
+<body>
+    <div class="Page">
+        <!-- Page :: Start -->
+
+        <!-- ActionBar -->
+        <div class="ActionBar">
+            <div class="ActionBar-GoBack"><img src="../../svg/btn_back.svg"></div>
+            <div class="ActionBar-Title">
+                <div class="ActionBar-Title-Text">
+                    <span class="hangle">이익현황</span>
+                </div>
+            </div>
+            <div class="ActionBar-More"></div>
+        </div>
+
+        <!-- ToolBar -->
+        <div class="ToolBar">
+            <!-- SelectDate -->
+            <div class="SelectDate">
+                <div class="SelectDate-Input"><input type="text" id="select-date" class="date" onchange="loadData()"></div>
+                <div class="SelectDate-Button Calendar-Button" data-target="select-date"><img src="../../svg/icon_calendar.svg"></div>
+            </div>
+
+            <!-- gap -->
+            <div class="flex-gap"></div>
+
+            <!-- SelectDistrict -->
+            <div class="SelectDistrict">
+                <div class="SelectDistrict-Select">
+                    <select id="area" onchange="loadData()">
+                        <option value="">지역</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- TableHead -->
+        <div class="TableHead">
+            <div class="TableHead-Row">
+                <div class="TableHead-Row-Cell"><span class="hangle">품목군</span></div>
+                <div class="TableHead-Row-Cell"><span class="hangle">품목명</span></div>
+                <div class="TableHead-Row-Cell"><span class="hangle">금액</span></div>
+            </div>
+        </div>
+
+        <!-- EmptyData -->
+        <div class="EmptyData">
+            <div class="EmptyData-Item">
+                <div class="EmptyData-Item-Image"><img src="../../svg/empty_data.svg"></div>
+                <div class="EmptyData-Item-Text"><span class="hangle">등록된 데이터가 없습니다.</span></div>
+            </div>
+        </div>
+
+        <!-- TableBody -->
+        <div class="TableBody">
+        </div>
+
+        <!-- TableFoot -->
+        <div class="TableFoot">
+            <div class="TableFoot-Row">
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left">
+                    <span class="hangle foot-title">당해월</span>
+                </div>
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right">
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt1" id="mm-amt1">0</span> <span class="hangle kickup">원</span> <img src="../../svg/icon_sales.svg"></div>
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt2" id="mm-amt2">0</span> <span class="hangle kickup">원</span> <img src="../../svg/icon_sellout.svg"></div>
+                </div>
+            </div>
+            <div class="TableFoot-Row">
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Left">
+                    <span class="hangle foot-title">당해연도</span>
+                </div>
+                <div class="TableFoot-Row-Cell TableFoot-Row-Cell-Right">
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt1" id="yy-amt1">0</span> <span class="hangle kickup">원</span> <img src="../../svg/icon_sales.svg"></div>
+                    <div class="TableFoot-Row-Cell-Text"><span class="engnum amt2" id="yy-amt2">0</span> <span class="hangle kickup">원</span> <img src="../../svg/icon_sellout.svg"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Page :: End -->
+    </div>
+</body>
+</html>

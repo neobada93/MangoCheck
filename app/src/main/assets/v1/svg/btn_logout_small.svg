@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <g id="btn_logout" transform="translate(2 3)">
+    <rect id="transparent_link_area" class="cls-1" width="26" height="26" transform="translate(-2 -3)"/>
+    <g id="original">
+      <path id="trunk" class="cls-2" d="M1360,3110h-8a4.012,4.012,0,0,0-4,4v6a4.012,4.012,0,0,0,4,4h8a4.012,4.012,0,0,0,4-4v-6A4.012,4.012,0,0,0,1360,3110Zm-4,9a2,2,0,1,1,2-2A2.006,2.006,0,0,1,1356,3119Z" transform="translate(-1348 -3104)"/>
+      <path id="upper" class="cls-2" d="M1352,3110v-2a4,4,0,0,1,8,0v2" transform="translate(-1348 -3104)"/>
+    </g>
+  </g>
+</svg>

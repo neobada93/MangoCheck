@@ -1,0 +1,42 @@
+<svg id="allotment" xmlns="http://www.w3.org/2000/svg" width="85" height="24" viewBox="0 0 85 24">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-1, .cls-3 {
+        stroke: #586565;
+      }
+
+      .cls-2 {
+        fill: #586565;
+        font-size: 13px;
+        font-family: NotoSansKR-Regular, Noto Sans KR;
+        letter-spacing: -0.05em;
+      }
+
+      .cls-3, .cls-5 {
+        fill: none;
+      }
+
+      .cls-3 {
+        stroke-linecap: round;
+        stroke-width: 1.5px;
+      }
+
+      .cls-4 {
+        stroke: none;
+      }
+    </style>
+  </defs>
+  <g id="bg_allotment" class="cls-1">
+    <rect class="cls-4" width="85" height="24" rx="12"/>
+    <rect class="cls-5" x="0.5" y="0.5" width="84" height="23" rx="11.5"/>
+  </g>
+  <text id="세부기준" class="cls-2" transform="translate(13 17)"><tspan x="0" y="0">세부기준</tspan></text>
+  <g id="icon_select_arrow" transform="translate(53.5 25.5) rotate(-90)">
+    <line id="left_line" class="cls-3" x1="2" y2="2" transform="translate(12.5 14.5)"/>
+    <line id="right_line" class="cls-3" x1="2" y1="2" transform="translate(12.5 16.5)"/>
+  </g>
+</svg>
